@@ -21,6 +21,7 @@ on:
 permissions:
   contents: read
   security-events: write # required for the SARIF upload
+  pull-requests: write # required for the PR comment
 
 jobs:
   audit:
@@ -31,6 +32,8 @@ jobs:
         with:
           fail-on: high
 ```
+
+On same-repository pull requests, the action posts its compact report as a PR comment by default. Fork PRs cannot receive a comment because GitHub gives them a read-only token; the report remains available in the job summary. Set `comment-on-pr: 'false'` to disable PR comments.
 
 ### Inputs
 
@@ -47,6 +50,7 @@ All inputs are optional and map to CLI flags.
 | `ignore` | — | Space-separated vulnerability IDs to suppress |
 | `upload-sarif` | `true` | Upload the report to Code Scanning |
 | `upload-sarif-on-pr` | `false` | Also upload on `pull_request` events (off by default; fork PRs can't get the write token) |
+| `comment-on-pr` | `true` | Post the report as a PR comment (requires `pull-requests: write`; skipped for fork PRs) |
 | `category` | `pysentry` | Code Scanning category |
 | `args` | — | Extra raw CLI arguments |
 
@@ -57,7 +61,7 @@ All inputs are optional and map to CLI flags.
 | `exit-code` | PySentry exit code |
 | `output-file` | Path to the generated report |
 
-On push, the SARIF report is uploaded even when the audit fails, so findings always reach the Security tab; the job then fails with the audit's exit code. On pull requests, the job summary shows the compact report and the job still fails on findings at or above `fail-on`.
+On push, the SARIF report is uploaded even when the audit fails, so findings always reach the Security tab; the job then fails with the audit's exit code. On pull requests, the job summary and (for same-repository PRs) PR comment show the compact report, and the job still fails on findings at or above `fail-on`.
 
 ## Other CI systems
 

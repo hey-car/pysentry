@@ -42,6 +42,10 @@ inputs:
     description: 'Also upload SARIF on pull_request events. Off by default: fork PRs get a read-only token so the upload fails, and dependency findings do not map to the PR diff. On PRs the results show in the job summary instead.'
     required: false
     default: 'false'
+  comment-on-pr:
+    description: 'Post the scan report as a pull request comment (requires pull-requests: write; skipped for fork PRs)'
+    required: false
+    default: 'true'
   category:
     description: 'GitHub Code Scanning category for the uploaded SARIF'
     required: false
@@ -133,6 +137,11 @@ runs:
       run: |
         set -uo pipefail
 
+        summary_offset=0
+        if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "$GITHUB_STEP_SUMMARY" ]; then
+          summary_offset=$(wc -c < "$GITHUB_STEP_SUMMARY")
+        fi
+
         args=("$INPUT_PATH" --format "$INPUT_FORMAT" --direct-only)
         if [ -n "$INPUT_FAIL_ON" ]; then
           args+=(--fail-on "$INPUT_FAIL_ON")
@@ -153,6 +162,33 @@ runs:
 
         echo "exit-code=$exit_code" >> "$GITHUB_OUTPUT"
         echo "output-file=$INPUT_OUTPUT" >> "$GITHUB_OUTPUT"
+        echo "summary-offset=$summary_offset" >> "$GITHUB_OUTPUT"
+
+    - name: Comment on pull request
+      if: ${{ inputs.comment-on-pr == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+      uses: actions/github-script@v7
+      env:
+        SUMMARY_OFFSET: ${{ steps.scan.outputs.summary-offset }}
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          const fs = require('fs');
+          const offset = Number(process.env.SUMMARY_OFFSET);
+          if (!Number.isSafeInteger(offset) || offset < 0) {
+            throw new Error(`Invalid PySentry summary offset: ${process.env.SUMMARY_OFFSET}`);
+          }
+
+          const summary = fs.readFileSync(process.env.GITHUB_STEP_SUMMARY);
+          const body = summary.subarray(offset).toString('utf8').trim();
+          if (!body) {
+            throw new Error('PySentry did not write a report to the GitHub Actions job summary');
+          }
+
+          await github.rest.issues.createComment({
+            ...context.repo,
+            issue_number: context.issue.number,
+            body,
+          });
 
     - name: Upload SARIF to Code Scanning
       # Skip on pull_request by default: fork PRs cannot get security-events: write (the upload

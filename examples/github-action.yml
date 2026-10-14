@@ -2,8 +2,8 @@
 #
 # On push to the default branch, results are uploaded to GitHub Code Scanning
 # (Security tab). On pull requests the upload is skipped automatically — fork PRs
-# can't get the write token, so results appear in the run's job summary instead
-# (PySentry writes a compact report there whenever it runs in Actions).
+# can't get the write token, so results appear in the run's job summary instead.
+# Same-repository PRs also get a report comment (requires pull-requests: write).
 #
 # Copy this file to .github/workflows/pysentry.yml in your repository.
 
@@ -18,6 +18,8 @@ permissions:
   contents: read
   # Required for the SARIF upload to Code Scanning (used on push, not on PRs)
   security-events: write
+  # Required for the report comment on same-repository PRs
+  pull-requests: write
 
 jobs:
   audit:
@@ -34,3 +36,4 @@ jobs:
           # ignore: GHSA-xxxx-yyyy # space-separated IDs to suppress
           # upload-sarif: 'false'  # disable the Code Scanning upload entirely
           # upload-sarif-on-pr: 'true' # also upload on same-repo PRs (off by default)
+          # comment-on-pr: 'false' # disable the PR comment
