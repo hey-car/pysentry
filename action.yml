@@ -133,7 +133,7 @@ runs:
       run: |
         set -uo pipefail
 
-        args=("$INPUT_PATH" --format "$INPUT_FORMAT")
+        args=("$INPUT_PATH" --format "$INPUT_FORMAT" --direct-only)
         if [ -n "$INPUT_FAIL_ON" ]; then
           args+=(--fail-on "$INPUT_FAIL_ON")
         fi
