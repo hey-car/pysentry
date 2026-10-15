@@ -1190,7 +1190,7 @@ impl SarifGenerator {
         let driver = SarifToolComponent::builder()
             .name("pysentry".to_string())
             .version(env!("CARGO_PKG_VERSION").to_string())
-            .information_uri("https://github.com/nyudenkov/pysentry".to_string())
+            .information_uri("https://github.com/hey-car/pysentry".to_string())
             .semantic_version(env!("CARGO_PKG_VERSION").to_string())
             .short_description(
                 MultiformatMessageString::builder()

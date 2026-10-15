@@ -6,7 +6,7 @@ use anyhow::Result;
 use std::str::FromStr;
 
 pub(crate) const CURRENT_VERSION: &str = env!("CARGO_PKG_VERSION");
-pub(crate) const GITHUB_REPO: &str = "nyudenkov/pysentry";
+pub(crate) const GITHUB_REPO: &str = "hey-car/pysentry";
 
 pub async fn check_version(args: &CheckVersionArgs) -> Result<()> {
     // Info commands always show output - -q flag is accepted for CLI consistency but ignored

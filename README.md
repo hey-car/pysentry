@@ -6,12 +6,12 @@
 
 **Fast, reliable vulnerability scanning for Python dependencies.**
 
-[![CI](https://github.com/nyudenkov/pysentry/actions/workflows/ci.yml/badge.svg)](https://github.com/nyudenkov/pysentry/actions/workflows/ci.yml)
+[![CI](https://github.com/hey-car/pysentry/actions/workflows/ci.yml/badge.svg)](https://github.com/hey-car/pysentry/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/pysentry-rs)](https://pypi.org/project/pysentry-rs/)
 [![crates.io](https://img.shields.io/crates/v/pysentry)](https://crates.io/crates/pysentry)
 [![Downloads](https://static.pepy.tech/badge/pysentry-rs/week)](https://pepy.tech/projects/pysentry-rs)
 
-[**Documentation**](https://docs.pysentry.com) · [**Benchmarks**](benchmarks/results/) · [Help test & improve](https://github.com/nyudenkov/pysentry/issues/12) · [Usage survey](https://tally.so/r/mYNPNv)
+[**Documentation**](https://docs.pysentry.com) · [**Benchmarks**](benchmarks/results/) · [Help test & improve](https://github.com/hey-car/pysentry/issues/12) · [Usage survey](https://tally.so/r/mYNPNv)
 
 </div>
 
@@ -43,7 +43,7 @@ pip install pysentry-rs    # PyPI
 cargo install pysentry     # crates.io
 ```
 
-Pre-built binaries are attached to [GitHub Releases](https://github.com/nyudenkov/pysentry/releases). See the [installation guide](https://docs.pysentry.com/getting-started/installation) for all options.
+Pre-built binaries are attached to [GitHub Releases](https://github.com/hey-car/pysentry/releases). See the [installation guide](https://docs.pysentry.com/getting-started/installation) for all options.
 
 > **Naming:** the Python package installs the binary as `pysentry-rs`; the Rust crate and release binaries are plain `pysentry`. Examples below use `pysentry-rs` — substitute accordingly.
 
@@ -93,7 +93,7 @@ permissions:
 
 steps:
   - uses: actions/checkout@v4
-  - uses: nyudenkov/pysentry@v0.5.0
+  - uses: hey-car/pysentry@v0.5.0
     with:
       fail-on: high
 ```
@@ -140,7 +140,7 @@ Full documentation lives at [https://docs.pysentry.com](https://docs.pysentry.co
 
 ## Feedback
 
-Bug reports and feature requests are welcome on the [issue tracker](https://github.com/nyudenkov/pysentry/issues); a couple of minutes on the [usage survey](https://tally.so/r/mYNPNv) helps shape the roadmap. For anything else, reach out at nikita@pysentry.com.
+Bug reports and feature requests are welcome on the [issue tracker](https://github.com/hey-car/pysentry/issues); a couple of minutes on the [usage survey](https://tally.so/r/mYNPNv) helps shape the roadmap. For anything else, reach out at nikita@pysentry.com.
 
 If PySentry saves you time, consider [sponsoring on GitHub](https://github.com/sponsors/nyudenkov) or [buying me a coffee](https://buymeacoffee.com/nyudenkov).
 

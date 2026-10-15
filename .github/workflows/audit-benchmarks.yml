@@ -1,5 +1,5 @@
 # Dogfood: audit the benchmarks/ Python environment with our own GitHub Action.
-# Doubles as a live showcase that nyudenkov/pysentry works as advertised.
+# Doubles as a live showcase that hey-car/pysentry works as advertised.
 
 name: Audit Benchmarks Env
 
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: PySentry audit (benchmarks env)
-        uses: nyudenkov/pysentry@v0.4.9
+        uses: hey-car/pysentry@v0.4.9
         with:
           path: benchmarks
           fail-on: high

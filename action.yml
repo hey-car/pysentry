@@ -72,6 +72,7 @@ runs:
       env:
         INPUT_VERSION: ${{ inputs.version }}
         ACTION_REF: ${{ github.action_ref }}
+        ACTION_REPO: ${{ github.action_repository }}
       run: |
         set -euo pipefail
 
@@ -94,9 +95,9 @@ runs:
         esac
 
         if [ "$version" = "latest" ]; then
-          base_url="https://github.com/nyudenkov/pysentry/releases/latest/download"
+          base_url="https://github.com/$ACTION_REPO/releases/latest/download"
         else
-          base_url="https://github.com/nyudenkov/pysentry/releases/download/$version"
+          base_url="https://github.com/$ACTION_REPO/releases/download/$version"
         fi
         asset="pysentry-$platform.$ext"
 
@@ -177,11 +178,15 @@ runs:
             return;
           }
 
-          await github.rest.issues.createComment({
-            ...context.repo,
-            issue_number: context.issue.number,
-            body,
-          });
+          try {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+          } catch (error) {
+            core.warning(`Could not post PR comment (grant pull-requests: write or set comment-on-pr: 'false'): ${error.message}`);
+          }
 
     - name: Upload SARIF to Code Scanning
       # Skip on pull_request by default: fork PRs cannot get security-events: write (the upload

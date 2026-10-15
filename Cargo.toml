@@ -5,7 +5,7 @@ edition = "2021"
 rust-version = "1.79"
 description = "Security vulnerability auditing for Python packages"
 license = "MIT"
-repository = "https://github.com/nyudenkov/pysentry"
+repository = "https://github.com/hey-car/pysentry"
 keywords = ["python", "security", "audit", "vulnerabilities"]
 categories = ["development-tools"]
 
