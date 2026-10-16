@@ -57,23 +57,25 @@ impl LicenseClient {
     pub async fn find_copyleft_licenses(
         &self,
         dependencies: &[ScannedDependency],
-    ) -> Result<Vec<LicenseIssue>> {
+    ) -> Result<(Vec<LicenseIssue>, Vec<String>)> {
         let checks = dependencies
             .iter()
             .filter(|dependency| matches!(dependency.source, DependencySource::Registry))
             .map(|dependency| self.check_package(dependency));
         let mut issues = Vec::new();
+        let mut missing_packages = Vec::new();
         for result in join_all(checks).await {
             match result {
-                Ok(Some(issue)) => issues.push(issue),
-                Ok(None) => {}
+                Ok(PackageLicenseStatus::Issue(issue)) => issues.push(issue),
+                Ok(PackageLicenseStatus::NoIssue) => {}
+                Ok(PackageLicenseStatus::NotFound(package)) => missing_packages.push(package),
                 Err(error) => return Err(error),
             }
         }
-        Ok(issues)
+        Ok((issues, missing_packages))
     }
 
-    async fn check_package(&self, dependency: &ScannedDependency) -> Result<Option<LicenseIssue>> {
+    async fn check_package(&self, dependency: &ScannedDependency) -> Result<PackageLicenseStatus> {
         let _permit = self
             .semaphore
             .acquire()
@@ -83,7 +85,14 @@ impl LicenseClient {
             "{}/{}/{}/json",
             PYPI_JSON_BASE_URL, dependency.name, dependency.version
         );
-        let response = self.client.get(&url).send().await?.error_for_status()?;
+        let response = self.client.get(&url).send().await?;
+        if response.status() == reqwest::StatusCode::NOT_FOUND {
+            return Ok(PackageLicenseStatus::NotFound(format!(
+                "{} v{}",
+                dependency.name, dependency.version
+            )));
+        }
+        let response = response.error_for_status()?;
         let package: PackageResponse = response.json().await?;
 
         let license = package
@@ -98,14 +107,23 @@ impl LicenseClient {
                 })
             });
 
-        Ok(license.map(|license| LicenseIssue {
-            package_name: dependency.name.clone(),
-            installed_version: dependency.version.clone(),
-            license,
-            is_direct: dependency.is_direct,
-            source_file: dependency.source_file.clone(),
-        }))
+        Ok(match license {
+            Some(license) => PackageLicenseStatus::Issue(LicenseIssue {
+                package_name: dependency.name.clone(),
+                installed_version: dependency.version.clone(),
+                license,
+                is_direct: dependency.is_direct,
+                source_file: dependency.source_file.clone(),
+            }),
+            None => PackageLicenseStatus::NoIssue,
+        })
     }
+}
+
+enum PackageLicenseStatus {
+    Issue(LicenseIssue),
+    NoIssue,
+    NotFound(String),
 }
 
 fn copyleft_spdx_identifier(expression: &str) -> Option<&str> {
