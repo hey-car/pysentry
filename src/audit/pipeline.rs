@@ -842,7 +842,7 @@ async fn perform_audit(
                 .await
                 .map_err(anyhow::Error::from)
         } else {
-            Ok(Vec::new())
+            Ok((Vec::new(), Vec::new()))
         }
     };
 
@@ -851,7 +851,10 @@ async fn perform_audit(
     // whole audit: it becomes a "partial" scan whose handling depends on `fail_on_partial`.
     let (fetch_results, maintenance_issues, license_result) =
         tokio::join!(join_all(fetch_tasks), maintenance_future, license_future);
-    let license_issues = license_result?;
+    let (license_issues, missing_license_packages) = license_result?;
+    for package in missing_license_packages {
+        eprintln!("Warning: {package} was not found on PyPI; skipping its copyleft license check.");
+    }
 
     let mut databases = Vec::new();
     let mut failures: Vec<(&'static str, anyhow::Error)> = Vec::new();
