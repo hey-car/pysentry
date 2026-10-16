@@ -274,6 +274,10 @@ pub struct AuditArgs {
     #[arg(long)]
     pub forbid_unmaintained: bool,
 
+    /// Fail on packages licensed under GPL or AGPL
+    #[arg(long)]
+    pub forbid_copyleft: bool,
+
     /// Only check direct dependencies for maintenance status (skip transitive)
     #[arg(long)]
     pub maintenance_direct_only: bool,

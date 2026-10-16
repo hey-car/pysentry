@@ -32,6 +32,7 @@ jobs:
         with:
           # All inputs are optional; these are the common ones:
           fail-on: high            # fail the job on high/critical findings
+          forbid-copyleft: 'true'  # fail the job on GPL/AGPL dependencies
           # sources: osv           # limit vulnerability sources
           # ignore: GHSA-xxxx-yyyy # space-separated IDs to suppress
           # upload-sarif: 'false'  # disable the Code Scanning upload entirely

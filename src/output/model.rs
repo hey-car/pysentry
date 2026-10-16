@@ -85,6 +85,8 @@ pub struct AuditReport {
     pub warnings: Vec<String>,
     /// PEP 792 maintenance issues (archived, deprecated, quarantined packages)
     pub maintenance_issues: Vec<MaintenanceIssue>,
+    /// GPL or AGPL package licenses found during the audit
+    pub license_issues: Vec<crate::license::LicenseIssue>,
     /// Top-level deps each transitive package traces back to (child → direct deps), for
     /// "transitive (via X)" display. Empty unless scanned from a lock file that records
     /// dependency edges (uv.lock, poetry.lock, pylock.toml).
@@ -109,6 +111,7 @@ impl Clone for AuditReport {
             fix_analysis: self.fix_analysis.clone(),
             warnings: self.warnings.clone(),
             maintenance_issues: self.maintenance_issues.clone(),
+            license_issues: self.license_issues.clone(),
             transitive_roots: self.transitive_roots.clone(),
             failed_sources: self.failed_sources.clone(),
             fail_summary: self.fail_summary.clone(),
@@ -135,6 +138,7 @@ impl AuditReport {
             fix_analysis,
             warnings,
             maintenance_issues,
+            license_issues: Vec::new(),
             transitive_roots: HashMap::new(),
             failed_sources: Vec::new(),
             fail_summary: None,
@@ -178,6 +182,10 @@ impl AuditReport {
     /// Check if there are any maintenance issues
     pub fn has_maintenance_issues(&self) -> bool {
         !self.maintenance_issues.is_empty()
+    }
+
+    pub fn has_copyleft_licenses(&self) -> bool {
+        !self.license_issues.is_empty()
     }
 
     /// Get maintenance summary

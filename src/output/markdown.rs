@@ -259,6 +259,24 @@ pub(crate) fn generate_markdown_report(
             if let Some(reason) = &issue.reason {
                 writeln!(output, "- **Reason:** {}", reason)?;
             }
+
+            if !report.license_issues.is_empty() {
+                writeln!(output, "## ⚖️ Copyleft Licences")?;
+                writeln!(output)?;
+                for issue in &report.license_issues {
+                    let dep_type = if issue.is_direct {
+                        "direct"
+                    } else {
+                        "transitive"
+                    };
+                    writeln!(
+                        output,
+                        "- `{}` v`{}`: **{}** ({dep_type})",
+                        issue.package_name, issue.installed_version, issue.license
+                    )?;
+                }
+                writeln!(output)?;
+            }
             writeln!(output)?;
         }
     }
@@ -406,7 +424,7 @@ pub(crate) fn generate_markdown_summary(
         writeln!(output)?;
     } else {
         let mut builder = Builder::new();
-        builder.push_record(["ID", "Package", "Version", "Severity", "Type", "Fix"]);
+        builder.push_record(["ID", "Package", "Version", "Severity", "Type"]);
         for m in &report.matches {
             let id = if m.suppressed.is_some() {
                 format!("{} _(suppressed)_", m.vulnerability.id)
@@ -421,25 +439,37 @@ pub(crate) fn generate_markdown_summary(
                     crate::output::model::via_suffix(report.roots_of(&m.package_name))
                 )
             };
-            let fix = if m.vulnerability.fixed_versions.is_empty() {
-                "—".to_string()
-            } else {
-                match crate::output::model::minimal_safe_upgrade(
-                    &m.vulnerability.fixed_versions,
-                    &m.installed_version,
-                ) {
-                    Some(v) => format!("→ {v}"),
-                    None => "other release line".to_string(),
-                }
-            };
             builder.push_record([
                 id,
                 m.package_name.to_string(),
                 format!("v{}", m.installed_version),
                 m.vulnerability.severity.to_string(),
                 dep_type,
-                fix,
             ]);
+        }
+        let table = builder.build().with(Style::markdown()).to_string();
+        writeln!(output, "{table}")?;
+        writeln!(output)?;
+    }
+
+    if !report.fix_analysis.fix_suggestions.is_empty() {
+        writeln!(output, "### 💡 FIX SUGGESTIONS")?;
+        writeln!(output)?;
+        let package_fixes =
+            super::model::group_fixes_by_package(&report.fix_analysis.fix_suggestions);
+        let mut builder = Builder::new();
+        builder.push_record(["Package", "Suggested Fix"]);
+        for (package, fixes) in &package_fixes {
+            let Some(best) = fixes.last() else {
+                continue;
+            };
+            let fix = format!("{} → {}", best.current_version, best.suggested_version);
+            let fix = if fixes.len() == 1 {
+                fix
+            } else {
+                format!("{fix} (fixes {} vulnerabilities)", fixes.len())
+            };
+            builder.push_record([package.as_str(), fix.as_str()]);
         }
         let table = builder.build().with(Style::markdown()).to_string();
         writeln!(output, "{table}")?;
@@ -455,6 +485,15 @@ pub(crate) fn generate_markdown_summary(
             maint.archived_count,
             maint.deprecated_count,
             maint.quarantined_count
+        )?;
+        writeln!(output)?;
+    }
+
+    if !report.license_issues.is_empty() {
+        writeln!(
+            output,
+            "⚖️ **Copyleft licences:** {} GPL/AGPL package(s) — exit non-zero",
+            report.license_issues.len()
         )?;
         writeln!(output)?;
     }
@@ -530,6 +569,19 @@ mod tests {
             output.contains("**1 vulnerability** found"),
             "output: {output}"
         );
+    }
+
+    #[test]
+    fn test_markdown_summary_has_one_fix_line_per_package() {
+        let report = create_test_report_with_multiple_fixes();
+        let output = generate_markdown_summary(&report).unwrap();
+
+        assert!(output.contains("FIX SUGGESTIONS"), "output: {output}");
+        assert!(
+            output.contains("fixes 2 vulnerabilities"),
+            "output: {output}"
+        );
+        assert!(!output.contains("| Fix "), "output: {output}");
     }
 
     #[test]

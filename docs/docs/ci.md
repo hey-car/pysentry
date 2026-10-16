@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Use in CI
 
-PySentry is built for CI: it exits non-zero when findings reach the `--fail-on` threshold, so any CI system can gate on it without extra flags. This page covers the GitHub Action and the generic recipe for other CI systems.
+PySentry is built for CI: it exits non-zero when findings reach the `--fail-on` threshold or when `--forbid-copyleft` finds a GPL/AGPL dependency, so any CI system can gate on it without extra flags. This page covers the GitHub Action and the generic recipe for other CI systems.
 
 ## GitHub Action
 
@@ -28,9 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nyudenkov/pysentry@v0.5.0
+      - uses: hey-car/pysentry@v0.5.0
         with:
           fail-on: high
+          forbid-copyleft: 'true'
 ```
 
 On same-repository pull requests, the action posts its compact report as a PR comment by default. Fork PRs cannot receive a comment because GitHub gives them a read-only token; the report remains available in the job summary. Set `comment-on-pr: 'false'` to disable PR comments.
@@ -44,6 +45,7 @@ All inputs are optional and map to CLI flags.
 | `path` | `.` | Project to audit |
 | `version` | action tag | PySentry version to download |
 | `fail-on` | PySentry default | Minimum severity causing a non-zero exit (`low`, `medium`, `high`, `critical`) |
+| `forbid-copyleft` | `true` | Fail on dependencies licensed under GPL or AGPL |
 | `sources` | PySentry default | Space-separated vulnerability sources (`pypa`, `pypi`, `osv`) |
 | `format` | `sarif` | Report format |
 | `output` | `pysentry-results.sarif` | Report file path |
@@ -61,7 +63,7 @@ All inputs are optional and map to CLI flags.
 | `exit-code` | PySentry exit code |
 | `output-file` | Path to the generated report |
 
-On push, the SARIF report is uploaded even when the audit fails, so findings always reach the Security tab; the job then fails with the audit's exit code. On pull requests, the job summary and (for same-repository PRs) PR comment show the compact report, and the job still fails on findings at or above `fail-on`.
+On push, the SARIF report is uploaded even when the audit fails, so findings always reach the Security tab; the job then fails with the audit's exit code. On pull requests, the job summary and (for same-repository PRs) PR comment show the compact report, and the job still fails on findings at or above `fail-on` or GPL/AGPL licences when `forbid-copyleft` is enabled.
 
 ## Other CI systems
 

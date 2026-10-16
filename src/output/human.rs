@@ -487,6 +487,26 @@ pub(crate) fn generate_human_report(
                 pkg_w = pkg_w.max(issue.package_name.to_string().chars().count());
                 ver_w = ver_w.max(format!("v{}", issue.installed_version).chars().count());
             }
+
+            if !report.license_issues.is_empty() {
+                writeln!(output)?;
+                writeln!(output, "{}", "COPYLEFT LICENCES".style(styles.header))?;
+                for issue in &report.license_issues {
+                    let dep_type = if issue.is_direct {
+                        "direct"
+                    } else {
+                        "transitive"
+                    };
+                    writeln!(
+                        output,
+                        "  {} v{}  {}  {}",
+                        issue.package_name.to_string().style(styles.package),
+                        issue.installed_version,
+                        issue.license,
+                        dep_type.style(styles.dimmed)
+                    )?;
+                }
+            }
             let type_budget = type_column_budget(get_terminal_width(), status_w + pkg_w + ver_w, 4);
 
             for issue in &report.maintenance_issues {
