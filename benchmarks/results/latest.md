@@ -1,7 +1,7 @@
 # PySentry vs pip-audit Benchmark Report
 
-**Generated:** 2026-08-20 20:09:19  
-**Duration:** 42m 33.68s  
+**Generated:** 2026-10-16 14:46:27  
+**Duration:** 41m 47.07s  
 **Tools:** pip-audit 2.10.1, pysentry 0.5.0  
 **Runs per config:** 5 (reported value is the **median**; ± is stdev)
 
@@ -44,7 +44,7 @@ Most pysentry configs run with PEP 792 maintenance checks **off** (pip-audit has
 ## Test Environment
 
 - **Platform:** Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
-- **Python:** 3.11.16
+- **Python:** 3.11.17
 - **CPU Cores:** 4
 - **Total Memory:** 15.61 GB
 
@@ -54,97 +54,97 @@ Most pysentry configs run with PEP 792 maintenance checks **off** (pip-audit has
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 0.581s | 0.522s | ±0.091s | 1.00x | 126.95 MB | 0 | 0 |
-| 🥈 pysentry-osv | 0.686s | 0.596s | ±0.061s | 1.18x | 127.21 MB | 0 | 0 |
-| pysentry-pypi-maintenance | 0.933s | 0.596s | ±0.200s | 1.61x | 127.10 MB | 0 | 0 |
-| pysentry-pypa | 2.017s | 1.963s | ±0.138s | 3.47x | 254.42 MB | 0 | 0 |
-| pysentry-all-sources | 2.096s | 2.024s | ±0.166s | 3.61x | 255.94 MB | 0 | 0 |
-| pip-audit-pypi | 8.709s | 7.532s | ±1.817s | 15.00x | 139.54 MB | 0 | 0 |
-| pip-audit-osv | 12.020s | 11.429s | ±0.762s | 20.70x | 135.70 MB | 0 | 0 |
+| 🥇 pysentry-pypi | 0.264s | 0.255s | ±0.031s | 1.00x | 120.39 MB | 0 | 0 |
+| 🥈 pysentry-pypi-maintenance | 0.319s | 0.313s | ±0.022s | 1.20x | 119.39 MB | 0 | 0 |
+| pysentry-osv | 0.406s | 0.401s | ±0.052s | 1.53x | 117.78 MB | 0 | 0 |
+| pysentry-pypa | 2.076s | 2.031s | ±0.469s | 7.85x | 286.37 MB | 0 | 0 |
+| pysentry-all-sources | 2.096s | 2.052s | ±0.036s | 7.92x | 288.03 MB | 0 | 0 |
+| pip-audit-pypi | 8.312s | 8.244s | ±0.123s | 31.43x | 138.50 MB | 0 | 0 |
+| pip-audit-osv | 10.696s | 10.526s | ±0.230s | 40.44x | 138.47 MB | 0 | 0 |
 
 ### small_requirements — hot cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 0.273s | 0.265s | ±0.030s | 1.00x | 126.93 MB | 0 | 0 |
-| 🥈 pysentry-osv | 0.291s | 0.239s | ±0.050s | 1.06x | 126.82 MB | 0 | 0 |
-| pysentry-pypi-maintenance | 0.329s | 0.240s | ±0.055s | 1.20x | 127.06 MB | 0 | 0 |
-| pysentry-pypa | 0.826s | 0.797s | ±0.129s | 3.02x | 341.63 MB | 0 | 0 |
-| pysentry-all-sources | 0.910s | 0.806s | ±0.061s | 3.33x | 341.50 MB | 0 | 0 |
-| pip-audit-pypi | 5.164s | 5.124s | ±0.125s | 18.89x | 138.12 MB | 0 | 0 |
-| pip-audit-osv | 8.338s | 8.198s | ±0.109s | 30.51x | 135.48 MB | 0 | 0 |
+| 🥇 pysentry-osv | 0.194s | 0.192s | ±0.002s | 1.00x | 120.40 MB | 0 | 0 |
+| 🥈 pysentry-pypi | 0.195s | 0.185s | ±0.015s | 1.01x | 120.04 MB | 0 | 0 |
+| pysentry-pypi-maintenance | 0.212s | 0.197s | ±0.007s | 1.09x | 118.57 MB | 0 | 0 |
+| pysentry-pypa | 0.959s | 0.948s | ±0.007s | 4.94x | 386.57 MB | 0 | 0 |
+| pysentry-all-sources | 0.988s | 0.986s | ±0.014s | 5.08x | 386.82 MB | 0 | 0 |
+| pip-audit-pypi | 7.467s | 7.447s | ±0.076s | 38.42x | 135.36 MB | 0 | 0 |
+| pip-audit-osv | 10.161s | 10.029s | ±0.314s | 52.29x | 137.66 MB | 0 | 0 |
 
 ### large_requirements — cold cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 1.291s | 1.220s | ±0.116s | 1.00x | 195.28 MB | 0 | 0 |
-| 🥈 pysentry-osv | 1.482s | 1.187s | ±0.330s | 1.15x | 194.62 MB | 0 | 0 |
-| pysentry-pypi-maintenance | 1.966s | 1.722s | ±0.179s | 1.52x | 197.55 MB | 0 | 0 |
-| pysentry-pypa | 2.767s | 2.452s | ±0.330s | 2.14x | 254.50 MB | 0 | 0 |
-| pysentry-all-sources | 2.852s | 2.694s | ±0.119s | 2.21x | 256.65 MB | 0 | 0 |
-| pip-audit-pypi | 24.879s | 19.682s | ±2.684s | 19.28x | 206.44 MB | 0 | 0 |
-| pip-audit-osv | 35.670s | 32.237s | ±3.160s | 27.64x | 206.29 MB | 0 | 0 |
+| 🥇 pysentry-pypi | 0.694s | 0.677s | ±0.013s | 1.00x | 216.07 MB | 0 | 0 |
+| 🥈 pysentry-pypi-maintenance | 0.841s | 0.823s | ±0.030s | 1.21x | 214.35 MB | 0 | 0 |
+| pysentry-osv | 0.907s | 0.878s | ±0.017s | 1.31x | 214.52 MB | 0 | 0 |
+| pysentry-all-sources | 2.497s | 2.474s | ±0.042s | 3.60x | 289.11 MB | 0 | 0 |
+| pysentry-pypa | 2.505s | 2.474s | ±0.035s | 3.61x | 286.38 MB | 0 | 0 |
+| pip-audit-pypi | 16.320s | 15.386s | ±0.785s | 23.51x | 212.19 MB | 0 | 0 |
+| pip-audit-osv | 30.146s | 29.916s | ±2.084s | 43.43x | 212.29 MB | 0 | 0 |
 
 ### large_requirements — hot cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi-maintenance | 0.649s | 0.628s | ±0.081s | 1.00x | 191.56 MB | 0 | 0 |
-| 🥈 pysentry-pypi | 0.670s | 0.630s | ±0.019s | 1.03x | 194.67 MB | 0 | 0 |
-| pysentry-osv | 0.691s | 0.631s | ±0.098s | 1.06x | 193.26 MB | 0 | 0 |
-| pysentry-all-sources | 1.277s | 1.224s | ±0.057s | 1.97x | 341.51 MB | 0 | 0 |
-| pysentry-pypa | 1.288s | 1.157s | ±0.093s | 1.99x | 341.65 MB | 0 | 0 |
-| pip-audit-pypi | 8.385s | 8.220s | ±0.174s | 12.92x | 205.05 MB | 0 | 0 |
-| pip-audit-osv | 24.661s | 23.326s | ±1.093s | 38.00x | 205.21 MB | 0 | 0 |
+| 🥇 pysentry-pypi | 0.559s | 0.548s | ±0.017s | 1.00x | 215.62 MB | 0 | 0 |
+| 🥈 pysentry-osv | 0.562s | 0.557s | ±0.015s | 1.01x | 215.12 MB | 0 | 0 |
+| pysentry-pypi-maintenance | 0.584s | 0.573s | ±0.009s | 1.04x | 212.34 MB | 0 | 0 |
+| pysentry-pypa | 1.329s | 1.315s | ±0.019s | 2.38x | 386.62 MB | 0 | 0 |
+| pysentry-all-sources | 1.331s | 1.309s | ±0.013s | 2.38x | 386.85 MB | 0 | 0 |
+| pip-audit-pypi | 13.329s | 13.298s | ±0.118s | 23.84x | 211.02 MB | 0 | 0 |
+| pip-audit-osv | 28.576s | 28.104s | ±0.449s | 51.11x | 210.77 MB | 0 | 0 |
 
 ### pinned_requirements — cold cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 0.541s | 0.464s | ±0.153s | 1.00x | 15.48 MB | 103 | 104 ⚠️ |
-| 🥈 pysentry-pypi-maintenance | 0.776s | 0.683s | ±0.284s | 1.44x | 43.32 MB | 103 | 104 ⚠️ |
-| pysentry-pypa | 1.960s | 1.737s | ±0.138s | 3.63x | 254.97 MB | 100 | 100 |
-| pysentry-osv | 2.783s | 2.638s | ±0.444s | 5.15x | 20.75 MB | 103 | 103 |
-| pysentry-all-sources | 3.352s | 3.178s | ±0.364s | 6.20x | 263.70 MB | 104 | 104 |
-| pip-audit-pypi | 5.063s | 4.157s | ±1.091s | 9.37x | 56.68 MB | 103 | 143 ⚠️ |
-| pip-audit-osv | 27.006s | 24.160s | ±1.919s | 49.96x | 56.89 MB | 103 | 198 ⚠️ |
+| 🥇 pysentry-pypi | 0.217s | 0.205s | ±0.102s | 1.00x | 14.51 MB | 120 | 120 |
+| 🥈 pysentry-pypi-maintenance | 0.320s | 0.312s | ±0.264s | 1.48x | 45.86 MB | 120 | 120 |
+| pysentry-pypa | 1.947s | 1.899s | ±0.208s | 8.99x | 286.30 MB | 113 | 113 |
+| pysentry-osv | 2.288s | 2.162s | ±0.153s | 10.57x | 22.77 MB | 120 | 120 |
+| pip-audit-pypi | 2.597s | 2.003s | ±0.531s | 12.00x | 51.23 MB | 120 | 219 ⚠️ |
+| pysentry-all-sources | 3.677s | 3.635s | ±1.093s | 16.98x | 297.64 MB | 121 | 121 |
+| pip-audit-osv | 25.062s | 24.072s | ±1.024s | 115.74x | 51.42 MB | 120 | 230 ⚠️ |
 
 ### pinned_requirements — hot cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 0.011s | 0.011s | ±0.000s | 1.00x | 7.76 MB | 103 | 104 ⚠️ |
-| 🥈 pysentry-pypi-maintenance | 0.021s | 0.018s | ±0.003s | 1.91x | 7.52 MB | 103 | 104 ⚠️ |
-| pysentry-osv | 0.030s | 0.029s | ±0.002s | 2.76x | 7.67 MB | 103 | 103 |
-| pip-audit-pypi | 0.507s | 0.495s | ±0.007s | 46.42x | 56.87 MB | 103 | 143 ⚠️ |
-| pysentry-pypa | 0.583s | 0.582s | ±0.001s | 53.38x | 341.71 MB | 100 | 100 |
-| pysentry-all-sources | 0.623s | 0.621s | ±0.007s | 57.07x | 353.05 MB | 104 | 104 |
-| pip-audit-osv | 28.320s | 25.943s | ±2.160s | 2592.57x | 56.77 MB | 103 | 198 ⚠️ |
+| 🥇 pysentry-pypi | 0.020s | 0.020s | ±0.001s | 1.00x | 7.60 MB | 120 | 120 |
+| 🥈 pysentry-pypi-maintenance | 0.034s | 0.031s | ±0.005s | 1.69x | 7.65 MB | 120 | 120 |
+| pysentry-osv | 0.053s | 0.052s | ±0.001s | 2.61x | 7.62 MB | 120 | 120 |
+| pip-audit-pypi | 0.757s | 0.752s | ±0.006s | 37.13x | 51.21 MB | 120 | 219 ⚠️ |
+| pysentry-pypa | 0.800s | 0.799s | ±0.010s | 39.24x | 386.48 MB | 113 | 113 |
+| pysentry-all-sources | 0.836s | 0.828s | ±0.012s | 40.99x | 400.32 MB | 121 | 121 |
+| pip-audit-osv | 27.063s | 26.472s | ±0.304s | 1326.78x | 56.82 MB | 120 | 230 ⚠️ |
 
 ### pinned_large_requirements — cold cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 1.206s | 0.847s | ±0.459s | 1.00x | 14.93 MB | 29 | 29 |
-| 🥈 pysentry-osv | 1.863s | 1.617s | ±1.931s | 1.55x | 20.79 MB | 30 | 30 |
-| pysentry-pypa | 2.001s | 1.749s | ±0.198s | 1.66x | 255.11 MB | 23 | 23 |
-| pysentry-all-sources | 2.497s | 2.273s | ±0.166s | 2.07x | 263.66 MB | 30 | 30 |
-| pysentry-pypi-maintenance | 2.636s | 1.626s | ±0.726s | 2.19x | 46.02 MB | 29 | 29 |
-| pip-audit-pypi | 18.766s | 13.351s | ±11.792s | 15.57x | 56.97 MB | 29 | 30 ⚠️ |
-| pip-audit-osv | 1m 40.65s | 1m 20.33s | ±9.938s | 83.48x | 57.04 MB | 30 | 49 ⚠️ |
+| 🥇 pysentry-pypi | 0.486s | 0.418s | ±0.356s | 1.00x | 15.97 MB | 95 | 95 |
+| 🥈 pysentry-pypi-maintenance | 0.725s | 0.687s | ±0.344s | 1.49x | 55.62 MB | 95 | 95 |
+| pysentry-pypa | 1.903s | 1.889s | ±0.116s | 3.92x | 286.91 MB | 91 | 91 |
+| pysentry-osv | 2.614s | 2.402s | ±0.146s | 5.38x | 27.27 MB | 98 | 98 |
+| pysentry-all-sources | 3.415s | 3.372s | ±0.395s | 7.03x | 300.14 MB | 98 | 98 |
+| pip-audit-pypi | 8.784s | 5.397s | ±2.033s | 18.08x | 52.52 MB | 95 | 126 ⚠️ |
+| pip-audit-osv | 1m 38.09s | 1m 37.62s | ±3.170s | 201.96x | 52.73 MB | 98 | 184 ⚠️ |
 
 ### pinned_large_requirements — hot cache
 
 | Config | Median Time | Min | Stdev | Rel | Peak Mem | Distinct | Reported |
 |--------|-------------|-----|-------|-----|----------|----------|----------|
-| 🥇 pysentry-pypi | 0.011s | 0.011s | ±0.001s | 1.00x | 7.67 MB | 29 | 29 |
-| 🥈 pysentry-pypi-maintenance | 0.027s | 0.021s | ±0.009s | 2.34x | 7.78 MB | 29 | 29 |
-| pysentry-osv | 0.043s | 0.041s | ±0.001s | 3.71x | 7.57 MB | 30 | 30 |
-| pysentry-pypa | 0.569s | 0.569s | ±0.002s | 49.63x | 341.84 MB | 23 | 23 |
-| pysentry-all-sources | 0.624s | 0.618s | ±0.003s | 54.41x | 353.14 MB | 30 | 30 |
-| pip-audit-pypi | 0.890s | 0.884s | ±0.005s | 77.60x | 57.03 MB | 29 | 30 ⚠️ |
-| pip-audit-osv | 1m 40.34s | 1m 25.17s | ±10.756s | 8752.16x | 56.88 MB | 30 | 49 ⚠️ |
+| 🥇 pysentry-pypi | 0.027s | 0.026s | ±0.001s | 1.00x | 7.61 MB | 95 | 95 |
+| 🥈 pysentry-pypi-maintenance | 0.048s | 0.043s | ±0.006s | 1.76x | 7.62 MB | 95 | 95 |
+| pysentry-osv | 0.091s | 0.090s | ±0.001s | 3.34x | 26.39 MB | 98 | 98 |
+| pysentry-pypa | 0.813s | 0.802s | ±0.008s | 29.89x | 386.48 MB | 91 | 91 |
+| pysentry-all-sources | 0.904s | 0.900s | ±0.004s | 33.26x | 405.46 MB | 98 | 98 |
+| pip-audit-pypi | 1.457s | 1.443s | ±0.012s | 53.58x | 51.40 MB | 95 | 126 ⚠️ |
+| pip-audit-osv | 1m 40.64s | 1m 38.46s | ±23.366s | 3700.28x | 52.64 MB | 98 | 184 ⚠️ |
 
 ## Choosing a pysentry configuration
 
@@ -154,78 +154,78 @@ Concrete cost of each pysentry option. `vs best` is relative to the fastest pyse
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 0.581s | 126.95 MB | 0 | 0 | 1.00x |
-| pysentry-osv | 0.686s | 127.21 MB | 0 | 0 | 1.18x |
-| pysentry-pypi-maintenance | 0.933s | 127.10 MB | 0 | 0 | 1.61x |
-| pysentry-pypa | 2.017s | 254.42 MB | 0 | 0 | 3.47x |
-| pysentry-all-sources | 2.096s | 255.94 MB | 0 | 0 | 3.61x |
+| pysentry-pypi | 0.264s | 120.39 MB | 0 | 0 | 1.00x |
+| pysentry-pypi-maintenance | 0.319s | 119.39 MB | 0 | 0 | 1.20x |
+| pysentry-osv | 0.406s | 117.78 MB | 0 | 0 | 1.53x |
+| pysentry-pypa | 2.076s | 286.37 MB | 0 | 0 | 7.85x |
+| pysentry-all-sources | 2.096s | 288.03 MB | 0 | 0 | 7.92x |
 
 ### small_requirements — hot cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 0.273s | 126.93 MB | 0 | 0 | 1.00x |
-| pysentry-osv | 0.291s | 126.82 MB | 0 | 0 | 1.06x |
-| pysentry-pypi-maintenance | 0.329s | 127.06 MB | 0 | 0 | 1.20x |
-| pysentry-pypa | 0.826s | 341.63 MB | 0 | 0 | 3.02x |
-| pysentry-all-sources | 0.910s | 341.50 MB | 0 | 0 | 3.33x |
+| pysentry-osv | 0.194s | 120.40 MB | 0 | 0 | 1.00x |
+| pysentry-pypi | 0.195s | 120.04 MB | 0 | 0 | 1.01x |
+| pysentry-pypi-maintenance | 0.212s | 118.57 MB | 0 | 0 | 1.09x |
+| pysentry-pypa | 0.959s | 386.57 MB | 0 | 0 | 4.94x |
+| pysentry-all-sources | 0.988s | 386.82 MB | 0 | 0 | 5.08x |
 
 ### large_requirements — cold cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 1.291s | 195.28 MB | 0 | 0 | 1.00x |
-| pysentry-osv | 1.482s | 194.62 MB | 0 | 0 | 1.15x |
-| pysentry-pypi-maintenance | 1.966s | 197.55 MB | 0 | 0 | 1.52x |
-| pysentry-pypa | 2.767s | 254.50 MB | 0 | 0 | 2.14x |
-| pysentry-all-sources | 2.852s | 256.65 MB | 0 | 0 | 2.21x |
+| pysentry-pypi | 0.694s | 216.07 MB | 0 | 0 | 1.00x |
+| pysentry-pypi-maintenance | 0.841s | 214.35 MB | 0 | 0 | 1.21x |
+| pysentry-osv | 0.907s | 214.52 MB | 0 | 0 | 1.31x |
+| pysentry-all-sources | 2.497s | 289.11 MB | 0 | 0 | 3.60x |
+| pysentry-pypa | 2.505s | 286.38 MB | 0 | 0 | 3.61x |
 
 ### large_requirements — hot cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi-maintenance | 0.649s | 191.56 MB | 0 | 0 | 1.00x |
-| pysentry-pypi | 0.670s | 194.67 MB | 0 | 0 | 1.03x |
-| pysentry-osv | 0.691s | 193.26 MB | 0 | 0 | 1.06x |
-| pysentry-all-sources | 1.277s | 341.51 MB | 0 | 0 | 1.97x |
-| pysentry-pypa | 1.288s | 341.65 MB | 0 | 0 | 1.99x |
+| pysentry-pypi | 0.559s | 215.62 MB | 0 | 0 | 1.00x |
+| pysentry-osv | 0.562s | 215.12 MB | 0 | 0 | 1.01x |
+| pysentry-pypi-maintenance | 0.584s | 212.34 MB | 0 | 0 | 1.04x |
+| pysentry-pypa | 1.329s | 386.62 MB | 0 | 0 | 2.38x |
+| pysentry-all-sources | 1.331s | 386.85 MB | 0 | 0 | 2.38x |
 
 ### pinned_requirements — cold cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 0.541s | 15.48 MB | 103 | 104 ⚠️ | 1.00x |
-| pysentry-pypi-maintenance | 0.776s | 43.32 MB | 103 | 104 ⚠️ | 1.44x |
-| pysentry-pypa | 1.960s | 254.97 MB | 100 | 100 | 3.63x |
-| pysentry-osv | 2.783s | 20.75 MB | 103 | 103 | 5.15x |
-| pysentry-all-sources | 3.352s | 263.70 MB | 104 | 104 | 6.20x |
+| pysentry-pypi | 0.217s | 14.51 MB | 120 | 120 | 1.00x |
+| pysentry-pypi-maintenance | 0.320s | 45.86 MB | 120 | 120 | 1.48x |
+| pysentry-pypa | 1.947s | 286.30 MB | 113 | 113 | 8.99x |
+| pysentry-osv | 2.288s | 22.77 MB | 120 | 120 | 10.57x |
+| pysentry-all-sources | 3.677s | 297.64 MB | 121 | 121 | 16.98x |
 
 ### pinned_requirements — hot cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 0.011s | 7.76 MB | 103 | 104 ⚠️ | 1.00x |
-| pysentry-pypi-maintenance | 0.021s | 7.52 MB | 103 | 104 ⚠️ | 1.91x |
-| pysentry-osv | 0.030s | 7.67 MB | 103 | 103 | 2.76x |
-| pysentry-pypa | 0.583s | 341.71 MB | 100 | 100 | 53.38x |
-| pysentry-all-sources | 0.623s | 353.05 MB | 104 | 104 | 57.07x |
+| pysentry-pypi | 0.020s | 7.60 MB | 120 | 120 | 1.00x |
+| pysentry-pypi-maintenance | 0.034s | 7.65 MB | 120 | 120 | 1.69x |
+| pysentry-osv | 0.053s | 7.62 MB | 120 | 120 | 2.61x |
+| pysentry-pypa | 0.800s | 386.48 MB | 113 | 113 | 39.24x |
+| pysentry-all-sources | 0.836s | 400.32 MB | 121 | 121 | 40.99x |
 
 ### pinned_large_requirements — cold cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 1.206s | 14.93 MB | 29 | 29 | 1.00x |
-| pysentry-osv | 1.863s | 20.79 MB | 30 | 30 | 1.55x |
-| pysentry-pypa | 2.001s | 255.11 MB | 23 | 23 | 1.66x |
-| pysentry-all-sources | 2.497s | 263.66 MB | 30 | 30 | 2.07x |
-| pysentry-pypi-maintenance | 2.636s | 46.02 MB | 29 | 29 | 2.19x |
+| pysentry-pypi | 0.486s | 15.97 MB | 95 | 95 | 1.00x |
+| pysentry-pypi-maintenance | 0.725s | 55.62 MB | 95 | 95 | 1.49x |
+| pysentry-pypa | 1.903s | 286.91 MB | 91 | 91 | 3.92x |
+| pysentry-osv | 2.614s | 27.27 MB | 98 | 98 | 5.38x |
+| pysentry-all-sources | 3.415s | 300.14 MB | 98 | 98 | 7.03x |
 
 ### pinned_large_requirements — hot cache
 
 | Config | Median Time | Peak Mem | Distinct | Reported | vs best |
 |--------|-------------|----------|----------|----------|---------|
-| pysentry-pypi | 0.011s | 7.67 MB | 29 | 29 | 1.00x |
-| pysentry-pypi-maintenance | 0.027s | 7.78 MB | 29 | 29 | 2.34x |
-| pysentry-osv | 0.043s | 7.57 MB | 30 | 30 | 3.71x |
-| pysentry-pypa | 0.569s | 341.84 MB | 23 | 23 | 49.63x |
-| pysentry-all-sources | 0.624s | 353.14 MB | 30 | 30 | 54.41x |
+| pysentry-pypi | 0.027s | 7.61 MB | 95 | 95 | 1.00x |
+| pysentry-pypi-maintenance | 0.048s | 7.62 MB | 95 | 95 | 1.76x |
+| pysentry-osv | 0.091s | 26.39 MB | 98 | 98 | 3.34x |
+| pysentry-pypa | 0.813s | 386.48 MB | 91 | 91 | 29.89x |
+| pysentry-all-sources | 0.904s | 405.46 MB | 98 | 98 | 33.26x |
