@@ -144,11 +144,17 @@ pub async fn audit(
             .unwrap_or(0);
 
         let annotation_message = format!(
-            "PySentry found {} vulnerabilities: {} critical, {} high, {} medium, {} low, {} unknown",
-            summary.total_vulnerabilities, critical, high, medium, low, unknown
+            "PySentry found {} vulnerabilities and {} GPL/AGPL licences: {} critical, {} high, {} medium, {} low, {} unknown",
+            summary.total_vulnerabilities,
+            report.license_issues.len(),
+            critical,
+            high,
+            medium,
+            low,
+            unknown
         );
 
-        if summary.total_vulnerabilities > 0 {
+        if summary.total_vulnerabilities > 0 || !report.license_issues.is_empty() {
             crate::ci::github_warning(&annotation_message);
         } else {
             crate::ci::github_notice(&annotation_message);
@@ -230,7 +236,7 @@ pub async fn audit(
         return Ok(EXIT_ERROR);
     }
 
-    if fail_vulns || fail_maintenance {
+    if fail_vulns || fail_maintenance || report.has_copyleft_licenses() {
         Ok(EXIT_VULNERABILITIES_FOUND)
     } else {
         Ok(0)
@@ -825,11 +831,27 @@ async fn perform_audit(
         }
     };
 
-    // Run vulnerability fetching and maintenance checks in parallel. Sources are collected
+    let license_future = async {
+        if audit_args.forbid_copyleft {
+            if audit_args.is_verbose() {
+                eprintln!("Checking package licenses for GPL and AGPL...");
+            }
+            let license_client = crate::license::LicenseClient::new(&http_config)?;
+            license_client
+                .find_copyleft_licenses(&dependencies)
+                .await
+                .map_err(anyhow::Error::from)
+        } else {
+            Ok(Vec::new())
+        }
+    };
+
+    // Run vulnerability fetching and policy checks in parallel. Sources are collected
     // per-source (not `try_join_all` + `?`) so a single source failure does not abort the
     // whole audit: it becomes a "partial" scan whose handling depends on `fail_on_partial`.
-    let (fetch_results, maintenance_issues) =
-        tokio::join!(join_all(fetch_tasks), maintenance_future);
+    let (fetch_results, maintenance_issues, license_result) =
+        tokio::join!(join_all(fetch_tasks), maintenance_future, license_future);
+    let license_issues = license_result?;
 
     let mut databases = Vec::new();
     let mut failures: Vec<(&'static str, anyhow::Error)> = Vec::new();
@@ -977,6 +999,8 @@ async fn perform_audit(
     .with_transitive_roots(transitive_roots)
     .with_failed_sources(failed_sources)
     .with_fail_summary(fail_summary);
+    let mut report = report;
+    report.license_issues = license_issues;
 
     let summary = report.summary();
     let maint_summary = report.maintenance_summary();
@@ -995,7 +1019,8 @@ async fn perform_audit(
         }
     }
 
-    Ok((report, fail_vulns))
+    let fail_copyleft = report.has_copyleft_licenses();
+    Ok((report, fail_vulns || fail_copyleft))
 }
 
 async fn scan_explicit_requirements(

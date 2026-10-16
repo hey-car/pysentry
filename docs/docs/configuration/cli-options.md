@@ -27,6 +27,7 @@ Complete reference for all PySentry command line options.
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--fail-on` | Fail (exit non-zero) on vulnerabilities >= severity | `medium` |
+| `--forbid-copyleft` | Fail (exit non-zero) on GPL or AGPL dependencies | `false` |
 | `--sources` | Vulnerability sources: `pypa`, `pypi`, `osv` (multiple) | `pypa,pypi,osv` |
 | `--service-url` | Override the OSV API base URL (custom/self-hosted OSV-compatible endpoint). Only valid with `--sources osv` | public OSV API |
 | `--exclude-extra` | Exclude extra dependencies (dev, optional, etc) | `false` |

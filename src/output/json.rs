@@ -20,6 +20,7 @@ pub(crate) fn generate_json_report(
         fix_suggestions: &report.fix_analysis.fix_suggestions,
         warnings: &report.warnings,
         maintenance_issues: &report.maintenance_issues,
+        license_issues: &report.license_issues,
         partial: !report.failed_sources.is_empty(),
         failed_sources: &report.failed_sources,
         failing: report
@@ -49,6 +50,7 @@ struct JsonReportView<'a> {
     fix_suggestions: &'a [FixSuggestion],
     warnings: &'a [String],
     maintenance_issues: &'a [MaintenanceIssue],
+    license_issues: &'a [crate::license::LicenseIssue],
     /// True when one or more vulnerability sources failed to fetch — findings are incomplete.
     partial: bool,
     /// Names of the sources that failed to fetch (empty on a full scan).

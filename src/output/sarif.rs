@@ -5,6 +5,7 @@
 //! This module implements comprehensive SARIF 2.1.0 compliant output for security
 //! vulnerability reports, optimized for GitHub Security and GitLab Security integration.
 
+use crate::license::LicenseIssue;
 use crate::maintenance::{MaintenanceIssue, MaintenanceIssueType};
 use crate::parsers::DependencyStats;
 use crate::types::PackageName;
@@ -65,17 +66,20 @@ impl SarifGenerator {
         let start_time = Utc::now();
 
         info!(
-            "Generating SARIF 2.1.0 report with {} vulnerabilities and {} maintenance issues",
+            "Generating SARIF 2.1.0 report with {} vulnerabilities, {} maintenance issues, and {} license issues",
             report.matches.len(),
-            report.maintenance_issues.len()
+            report.maintenance_issues.len(),
+            report.license_issues.len()
         );
 
         self.preprocess_locations(&report.matches);
         self.generate_rules(&report.matches);
         self.generate_maintenance_rules(&report.maintenance_issues);
+        self.generate_license_rules(&report.license_issues);
 
         let mut results = self.create_sarif_results(&report.matches);
         results.extend(self.create_maintenance_results(&report.maintenance_issues));
+        results.extend(self.create_license_results(&report.license_issues));
 
         let sarif = self.build_sarif_document(
             results,
@@ -660,6 +664,105 @@ impl SarifGenerator {
     /// Get the SARIF rule ID for a maintenance issue type
     fn maintenance_rule_id(issue_type: &MaintenanceIssueType) -> String {
         format!("PEP792-{}", issue_type.to_string().to_uppercase())
+    }
+
+    fn generate_license_rules(&mut self, issues: &[LicenseIssue]) {
+        if issues.is_empty() {
+            return;
+        }
+
+        let rule_id = "PYSENTRY-COPYLEFT-LICENSE".to_string();
+        let properties = PropertyBag::builder()
+            .tags(vec!["license".to_string(), "copyleft".to_string()])
+            .build();
+        let default_config = ReportingConfiguration::builder()
+            .level(json!("error"))
+            .build();
+        self.rules.push(
+            ReportingDescriptor::builder()
+                .id(rule_id)
+                .name("Copyleft package license".to_string())
+                .short_description(
+                    MultiformatMessageString::builder()
+                        .text("Package uses a GPL or AGPL license".to_string())
+                        .build(),
+                )
+                .full_description(
+                    MultiformatMessageString::builder()
+                        .text("GPL and AGPL package licenses are prohibited by the configured dependency policy.".to_string())
+                        .build(),
+                )
+                .default_configuration(default_config)
+                .properties(properties)
+                .build(),
+        );
+    }
+
+    fn create_license_results(&self, issues: &[LicenseIssue]) -> Vec<SarifResult> {
+        let rule_id = "PYSENTRY-COPYLEFT-LICENSE".to_string();
+        issues
+            .iter()
+            .map(|issue| {
+                let file_path = issue.source_file.as_deref().unwrap_or(if issue.is_direct {
+                    "pyproject.toml"
+                } else {
+                    "uv.lock"
+                });
+                let physical_location = SarifPhysicalLocation::builder()
+                    .artifact_location(Self::artifact_location(file_path))
+                    .build();
+                let logical_location = SarifLogicalLocation::builder()
+                    .name(issue.package_name.to_string())
+                    .kind("package".to_string())
+                    .build();
+                let location = SarifLocation::builder()
+                    .physical_location(physical_location)
+                    .logical_locations(vec![logical_location])
+                    .build();
+
+                let fingerprint_input = format!(
+                    "{rule_id}:{}:{}",
+                    issue.package_name, issue.installed_version
+                );
+                let hash = format!("{:x}", Sha256::digest(fingerprint_input.as_bytes()));
+                let mut fingerprints = BTreeMap::new();
+                fingerprints.insert("pysentry/license/v1".to_string(), hash);
+                let mut additional_properties = BTreeMap::new();
+                additional_properties.insert(
+                    "package_name".to_string(),
+                    Value::String(issue.package_name.to_string()),
+                );
+                additional_properties.insert(
+                    "installed_version".to_string(),
+                    Value::String(issue.installed_version.to_string()),
+                );
+                additional_properties
+                    .insert("license".to_string(), Value::String(issue.license.clone()));
+                let properties = PropertyBag::builder()
+                    .additional_properties(additional_properties)
+                    .build();
+
+                let mut result = SarifResult::builder()
+                    .rule_id(rule_id.clone())
+                    .message(
+                        SarifMessage::builder()
+                            .text(format!(
+                                "Package '{}' v{} uses prohibited copyleft license {}",
+                                issue.package_name, issue.installed_version, issue.license
+                            ))
+                            .build(),
+                    )
+                    .level(ResultLevel::Error)
+                    .locations(vec![location])
+                    .partial_fingerprints(fingerprints)
+                    .properties(properties)
+                    .build();
+                if let Some(index) = self.find_rule_index(&rule_id) {
+                    result.rule_index = Some(index);
+                }
+                result
+            })
+            .collect()
     }
 
     /// Create SARIF results for maintenance issues

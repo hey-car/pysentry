@@ -18,6 +18,10 @@ inputs:
     description: 'Minimum severity that causes a non-zero exit (low, medium, high, critical). Uses PySentry default when empty.'
     required: false
     default: ''
+  forbid-copyleft:
+    description: 'Fail when a dependency is licensed under GPL or AGPL.'
+    required: false
+    default: 'true'
   sources:
     description: 'Space-separated vulnerability sources (pypa, pypi, osv). Uses PySentry default when empty.'
     required: false
@@ -130,6 +134,7 @@ runs:
       env:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_FORBID_COPYLEFT: ${{ inputs.forbid-copyleft }}
         INPUT_SOURCES: ${{ inputs.sources }}
         INPUT_FORMAT: ${{ inputs.format }}
         INPUT_OUTPUT: ${{ inputs.output }}
@@ -141,6 +146,9 @@ runs:
         args=("$INPUT_PATH" --format "$INPUT_FORMAT" --direct-only)
         if [ -n "$INPUT_FAIL_ON" ]; then
           args+=(--fail-on "$INPUT_FAIL_ON")
+        fi
+        if [ "$INPUT_FORBID_COPYLEFT" = "true" ]; then
+          args+=(--forbid-copyleft)
         fi
         for source in $INPUT_SOURCES; do
           args+=(--sources "$source")
@@ -204,6 +212,6 @@ runs:
         SCAN_EXIT_CODE: ${{ steps.scan.outputs.exit-code }}
       run: |
         if [ "$SCAN_EXIT_CODE" != "0" ]; then
-          echo "::error::PySentry found vulnerabilities at or above the fail-on threshold (exit code $SCAN_EXIT_CODE)"
+          echo "::error::PySentry found findings that violate configured vulnerability or licence policy (exit code $SCAN_EXIT_CODE)"
         fi
         exit "$SCAN_EXIT_CODE"

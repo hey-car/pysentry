@@ -29,6 +29,7 @@ pub mod cli;
 pub mod commands;
 pub mod config;
 pub mod dependency;
+pub mod license;
 pub mod logging;
 pub mod maintenance;
 pub mod notifications;

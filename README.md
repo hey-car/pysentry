@@ -96,11 +96,12 @@ steps:
   - uses: hey-car/pysentry@v0.5.0
     with:
       fail-on: high
+      forbid-copyleft: 'true'
 ```
 
 On same-repository pull requests, the action posts its report as a PR comment by default; fork PRs still show results in the job summary. Set `comment-on-pr: 'false'` to disable PR comments.
 
-On any other CI system, `pysentry-rs --fail-on high` exits non-zero when findings reach the threshold. Details in the [CI guide](https://docs.pysentry.com/ci).
+The action also fails by default on GPL or AGPL dependencies. Set `forbid-copyleft: 'false'` to disable that policy. On any other CI system, `pysentry-rs --fail-on high --forbid-copyleft` exits non-zero when findings reach the vulnerability threshold or a GPL/AGPL dependency. Details in the [CI guide](https://docs.pysentry.com/ci).
 
 ## Configuration
 
